@@ -7,24 +7,11 @@ export default function ClothingForm({ onSuccess }: { onSuccess?: () => void }) 
     color: '',
     season: 'all',
     occasion: 'casual',
-    notes: ''
+    notes: '',
+    image_url: ''
   });
-  const [image, setImage] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setImage(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,21 +19,17 @@ export default function ClothingForm({ onSuccess }: { onSuccess?: () => void }) 
     setMessage('');
 
     try {
-      const submitData = new FormData();
-      submitData.append('name', formData.name);
-      submitData.append('category', formData.category);
-      submitData.append('color', formData.color);
-      submitData.append('season', formData.season);
-      submitData.append('occasion', formData.occasion);
-      submitData.append('notes', formData.notes);
-      
-      if (image) {
-        submitData.append('image', image);
-      }
+      const clothingData = {
+        ...formData,
+        user_id: '00000000-0000-0000-0000-000000000001',
+        colors: formData.color ? [formData.color] : [],
+        style: []
+      };
 
       const response = await fetch('http://localhost:3001/api/clothing', {
         method: 'POST',
-        body: submitData
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(clothingData)
       });
 
       const result = await response.json();
@@ -59,10 +42,9 @@ export default function ClothingForm({ onSuccess }: { onSuccess?: () => void }) 
           color: '',
           season: 'all',
           occasion: 'casual',
-          notes: ''
+          notes: '',
+          image_url: ''
         });
-        setImage(null);
-        setImagePreview('');
         onSuccess?.();
       } else {
         setMessage('❌ 添加失败: ' + result.error);
@@ -109,26 +91,29 @@ export default function ClothingForm({ onSuccess }: { onSuccess?: () => void }) 
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        {/* 图片上传 */}
-        <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors">
+        {/* 图片URL */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">图片链接</label>
           <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            className="hidden"
-            id="image-upload"
+            type="url"
+            value={formData.image_url}
+            onChange={(e) => setFormData({...formData, image_url: e.target.value})}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            placeholder="https://example.com/your-image.jpg"
           />
-          <label htmlFor="image-upload" className="cursor-pointer">
-            {imagePreview ? (
-              <img src={imagePreview} alt="Preview" className="max-h-48 mx-auto rounded-lg" />
-            ) : (
-              <div className="text-gray-500">
-                <div className="text-4xl mb-2">📷</div>
-                <p>点击上传衣物照片</p>
-                <p className="text-sm">支持 JPG, PNG 格式</p>
-              </div>
-            )}
-          </label>
+          <p className="text-xs text-gray-500 mt-1">
+            💡 建议用图床（如 imgbb.com、sm.ms）上传图片后粘贴链接
+          </p>
+          {formData.image_url && (
+            <div className="mt-2">
+              <img 
+                src={formData.image_url} 
+                alt="预览" 
+                className="max-h-48 rounded-lg border"
+                onError={(e) => (e.target as HTMLImageElement).style.display = 'none'}
+              />
+            </div>
+          )}
         </div>
 
         {/* 名称 */}
