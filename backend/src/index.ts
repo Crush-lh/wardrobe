@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import multer from 'multer';
 import { supabase, testConnection } from './config/supabase';
 
 dotenv.config();
@@ -8,8 +9,17 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+// 单人模式固定用户 ID
+const DEFAULT_USER_ID = '00000000-0000-0000-0000-000000000001';
+
 app.use(cors());
 app.use(express.json());
+
+// 配置文件上传
+const upload = multer({ 
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 } // 5MB 限制
+});
 
 // 测试数据库连接
 app.get('/', async (req, res) => {
@@ -43,12 +53,43 @@ app.get('/api/clothing', async (req, res) => {
   }
 });
 
-// 添加衣物
-app.post('/api/clothing', async (req, res) => {
+// 添加衣物（支持图片上传）
+app.post('/api/clothing', upload.single('image'), async (req, res) => {
   try {
+    let imageUrl = null;
+    
+    // 如果有上传图片
+    if (req.file) {
+      const fileName = `${Date.now()}-${req.file.originalname}`;
+      const { data: uploadData, error: uploadError } = await supabase
+        .storage
+        .from('clothing-images')
+        .upload(fileName, req.file.buffer, {
+          contentType: req.file.mimetype
+        });
+      
+      if (uploadError) throw uploadError;
+      
+      // 获取公开 URL
+      const { data: urlData } = supabase
+        .storage
+        .from('clothing-images')
+        .getPublicUrl(fileName);
+      
+      imageUrl = urlData.publicUrl;
+    }
+
+    const clothingData = {
+      ...req.body,
+      user_id: DEFAULT_USER_ID,
+      image_url: imageUrl,
+      colors: req.body.colors ? JSON.parse(req.body.colors) : [],
+      style: req.body.style ? JSON.parse(req.body.style) : []
+    };
+
     const { data, error } = await supabase
       .from('clothing_items')
-      .insert([req.body])
+      .insert([clothingData])
       .select()
       .single();
 
