@@ -1,36 +1,61 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 👔 电子衣柜 (Wardrobe)
 
-## Getting Started
+智能穿搭推荐系统 — 根据你的衣物自动推荐今日穿搭。
 
-First, run the development server:
+## 项目结构
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```
+wardrobe/
+├── frontend/          # React 前端 (Vite + TypeScript + Tailwind)
+│   ├── src/
+│   └── package.json
+├── backend/           # Express 后端 (TypeScript)
+│   ├── src/
+│   └── package.json
+└── README.md
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 技术栈
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **前端:** React 18 + TypeScript + Vite + Tailwind CSS
+- **后端:** Node.js + Express + TypeScript
+- **数据库:** PostgreSQL (Supabase)
+- **部署:** Vercel + Render
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 快速开始
 
-## Learn More
+### 前端开发
+```bash
+cd frontend
+npm install
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+### 后端开发
+```bash
+cd backend
+cp .env.example .env
+npm install
+npm run dev
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 开发路线图
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- [x] Step 1: 项目初始化
+- [ ] Step 2: 数据库设计
+- [ ] Step 3: 用户认证
+- [ ] Step 4: 衣物录入
+- [ ] Step 5: 衣柜展示
+- [ ] Step 6: 编辑删除
+- [ ] Step 7: 穿搭组合
+- [ ] Step 8: 推荐算法
+- [ ] Step 9: 天气集成
+- [ ] Step 10: 穿搭日历
+- [ ] Step 11: 移动端适配
+- [ ] Step 12: AI图片识别
+- [ ] Step 13: 风格标签
+- [ ] Step 14: 数据导出
 
-## Deploy on Vercel
+## 作者
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+[Crush-lh](https://github.com/Crush-lh)
