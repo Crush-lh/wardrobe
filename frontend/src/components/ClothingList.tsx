@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { API_URL } from '../config/api';
 
 interface ClothingItem {
   id: string;
@@ -31,7 +32,7 @@ export default function ClothingList({ onRefresh }: { onRefresh?: number }) {
 
   const fetchClothing = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/clothing');
+      const response = await fetch(`${API_URL}/api/clothing`);
       const result = await response.json();
       if (result.success) {
         setItems(result.data || []);
@@ -47,7 +48,7 @@ export default function ClothingList({ onRefresh }: { onRefresh?: number }) {
     if (!confirm('确定要删除这件衣物吗？')) return;
     
     try {
-      const response = await fetch(`http://localhost:3001/api/clothing/${id}`, {
+      const response = await fetch(`${API_URL}/api/clothing/${id}`, {
         method: 'DELETE'
       });
       const result = await response.json();

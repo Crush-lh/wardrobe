@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { API_URL } from '../config/api';
 
 export default function ClothingForm({ onSuccess }: { onSuccess?: () => void }) {
   const [formData, setFormData] = useState({
@@ -26,7 +27,7 @@ export default function ClothingForm({ onSuccess }: { onSuccess?: () => void }) 
         style: []
       };
 
-      const response = await fetch('http://localhost:3001/api/clothing', {
+      const response = await fetch(`${API_URL}/api/clothing`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(clothingData)
